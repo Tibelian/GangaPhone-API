@@ -1,0 +1,17 @@
+{
+    "name": "tibelian/gangaphone-api",
+    "autoload": {
+        "psr-4": {
+            "Tibelian\\GangaphoneApi\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Tiberiu",
+            "email": "lordiulian@gmail.com"
+        }
+    ],
+    "require": {
+        "bramus/router": "~1.4"
+    }
+}
