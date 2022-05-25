@@ -14,11 +14,12 @@ class ProductPictureController {
         $ppId = $repo->create($_FILES['image'], $_POST['product_id']);
 
         // return the response
+        header('Content-Type: application/json');
         echo json_encode([
             'status' => 'ok',
             'data' => $ppId,
-            'query' => $repo->lastQuery
-        ], JSON_PRETTY_PRINT);
+            //'query' => $repo->lastQuery,
+        ]);
 
     }
 

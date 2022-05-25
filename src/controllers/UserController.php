@@ -21,12 +21,13 @@ class UserController {
         $uId = $repo->create($user);
 
         // return the response
+        header('Content-Type: application/json');
         echo json_encode([
             'status' => 'ok',
             'data' => $uId,
-            'query' => $repo->lastQuery,
+            //'query' => $repo->lastQuery,
             'error' => $repo->error
-        ], JSON_PRETTY_PRINT);
+        ]);
 
     }
 
@@ -44,12 +45,13 @@ class UserController {
         $data = $repo->find($user);
         
         // return the response
+        header('Content-Type: application/json');
         echo json_encode([
             'status' => 'ok',
             'data' => $data,
-            'query' => $repo->lastQuery,
+            //'query' => $repo->lastQuery,
             'error' => $repo->error
-        ], JSON_PRETTY_PRINT);
+        ]);
 
     }
 

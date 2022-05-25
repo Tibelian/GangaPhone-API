@@ -9,6 +9,24 @@ class ProductPictureRepository {
     public string $lastQuery = "";
     public string $error = "";
 
+    public function delete(array $pictures, int $productId):void {
+        $pIds = '';
+        for($i = 0; $i < sizeof($pictures); $i++) {
+            if ($i != 0) $pIds .= ",";
+            $pIds .= (int)$pictures[$i]['id'];
+        }
+        $sql = "
+            DELETE FROM product_picture pp 
+            INNER JOIN product p
+            ON pp.product_id = p.id
+            WHERE pp.id NOT IN ($pIds)
+            AND pp.product_id = $productId;
+        ";
+        $database = DatabaseManager::get();
+        $mysqli = $database->getConn();
+        $mysqli->query($sql);
+    }
+
     public function create(int $productId, string $url):?string {
         $query = "
             INSERT INTO product_picture(product_id, url)

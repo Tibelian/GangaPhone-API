@@ -36,6 +36,8 @@ class Service {
             '\Tibelian\GangaPhoneApi\Controller\ProductController@create');
         $router->post('/product/(\d+)', 
             '\Tibelian\GangaPhoneApi\Controller\ProductController@update');
+        $router->post('/product/(\d+)/visits', 
+            '\Tibelian\GangaPhoneApi\Controller\ProductController@updateVisits');
             
         $router->post('/user/new', 
             '\Tibelian\GangaPhoneApi\Controller\UserController@create');

@@ -31,7 +31,7 @@ class UserRepository {
         return -1;
     }
 
-    public function find(array $userCond):array {
+    public function find(array $userCond):?array {
         $database = DatabaseManager::get();
         $conn = $database->getConn();
         $query = '
@@ -43,7 +43,7 @@ class UserRepository {
         {
             if ($result->num_rows == 0) {
                 $this->error = 'not found';
-                return [];
+                return null;
             }
             $user = $result->fetch_assoc();
             $user['products'] = [];
@@ -79,7 +79,7 @@ class UserRepository {
         }   else {
             $this->error = $conn->error;
         }
-        return [];
+        return null;
     }
 
     private function appendWhere(array $user, \mysqli $mysqli):string 

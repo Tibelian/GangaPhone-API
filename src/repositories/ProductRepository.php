@@ -9,6 +9,48 @@ class ProductRepository {
     public string $lastQuery = "";
     public string $error = "";
 
+    public function update(int $id, array $product):bool {
+        $query = "
+            UPDATE product
+            SET name = ?, description = ?, 
+            status = ?, sold = ?, price = ?
+            WHERE id = ?;
+        ";
+        $database = DatabaseManager::get();
+        $stmt = $database->getConn()->prepare($query);
+        $name = $product['name'];
+        $desc = $product['description'];
+        $stat = $product['status'];
+        $sold = $product['sold'];
+        $price = $product['price'];
+        $pId = $id;
+        $stmt->bind_param("sssidi", $name, $desc, $stat, $sold, $price, $pId);
+
+        $ok = $stmt->execute();
+        $this->lastQuery = $query;
+        $this->error = $stmt->error;
+
+        return $ok;
+    }
+
+    public function upVisits(int $productId) {
+        $query = "
+            UPDATE product 
+            SET visits = visits + 1 
+            WHERE id = ?;
+        ";
+        $database = DatabaseManager::get();
+        $stmt = $database->getConn()->prepare($query);
+        $id = $productId;
+        $stmt->bind_param("i", $id);
+
+        $ok = $stmt->execute();
+        $this->lastQuery = $query;
+        $this->error = $stmt->error;
+
+        return $ok;
+    }
+
     public function create(array $product):int {
         $query = "
             INSERT INTO product(name, description, date, status, sold, visits, user_id, price)
@@ -42,28 +84,33 @@ class ProductRepository {
         $result = $conn->query($query);
         if ($result) {
             $data = $result->fetch_assoc();
-            $product = [];
-            $product['id'] = $data['pid'];
-            $product['name'] = $data['name'];
-            $product['description'] = $data['description'];
-            $product['date'] = $data['date'];
-            $product['status'] = $data['status'];
-            $product['price'] = $data['price'];
-            $product['sold'] = $data['sold'];
-            $product['visits'] = $data['visits'];
-            $product['user'] = [];
-            $product['user']['id'] = $data['uid'];
-            $product['user']['username'] = $data['username'];
-            $product['user']['location'] = $data['location'];
-            $product['user']['email'] = $data['email'];
-            $product['user']['phone'] = $data['phone'];
-            $product['pictures'] = [];
+            $product = [
+                'id' => (int) $data['pid'],
+                'name' => $data['name'],
+                'description' => $data['description'],
+                'date' => $data['date'],
+                'status' => $data['status'],
+                'sold' => (bool) $data['sold'],
+                'price' => (float) $data['price'],
+                'visits' => (int) $data['visits'],
+                'owner' => [
+                    'id' => (int) $data['uid'],
+                    'username' => $data['username'],
+                    'location' => $data['location'],
+                    'email' => $data['email'],
+                    'phone' => $data['phone'],
+                ],
+                'pictures' => [] // next query
+            ];
             $query2 = "
                 SELECT * FROM product_picture 
                 WHERE product_id = " . $data['pid'];
             $result2 = $conn->query($query2);
             while ($data2 = $result2->fetch_assoc())
-                $product['pictures'][] = $data2;
+                $product['pictures'][] = [
+                    'id' => (int) $data2['id'],
+                    'url' => $data2['url']
+                ];
             return $product;
         }
         return [];
@@ -71,8 +118,8 @@ class ProductRepository {
 
     public function search(?array $filter = []):array {
         $query = "
-            SELECT p.id as pid, p.name, p.description, p.status, p.date, p.price, 
-            p.sold, p.visits, u.id as uid, u.location, pp.url AS thumbnail, u.username
+            SELECT p.id as pid, p.name, p.description, p.status, p.date, p.price, p.sold, 
+            p.visits, u.id as uid, u.location, pp.id as ppid, pp.url AS thumbnail, u.username, u.email, u.phone
             FROM product p LEFT JOIN user u ON p.user_id = u.id 
             LEFT JOIN product_picture pp ON p.id = pp.product_id 
             WHERE p.sold = 0 " . $this->applyFilter($filter) . "
@@ -83,7 +130,29 @@ class ProductRepository {
         $result = $conn->query($query);
         if ($result)
             while($row = $result->fetch_assoc())
-                $entries[] = $row;
+                $entries[] = [
+                    'id' => (int) $row['pid'],
+                    'name' => $row['name'],
+                    'description' => $row['description'],
+                    'status' => $row['status'],
+                    'date' => $row['date'],
+                    'price' => (float) $row['price'],
+                    'sold' => (bool) $row['sold'],
+                    'visits' => (int) $row['visits'],
+                    'owner' => [
+                        'id' => (int) $row['uid'],
+                        'username' => $row['username'],
+                        'location' => $row['location'],
+                        'email' => $row['email'],
+                        'phone' => $row['phone']
+                    ],
+                    'pictures' => [
+                        [
+                            'id' => (int) $row['ppid'],
+                            'url' => $row['thumbnail']
+                        ]
+                    ]
+                ];
         $this->lastQuery = $query;
         return $entries;
     }
