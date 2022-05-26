@@ -24,26 +24,29 @@ class ProductController {
             }
         } catch(Exception $e) {}
         
-        // execute query
+        // crud manager
         $repo = new ProductRepository();
+        $repoPic = new ProductPictureRepository();
+        
+        // execute insertion query
         $pId = $repo->create($product);
 
+        // upload this picutres
         if ($pId != -1 && sizeof($_FILES) > 0) {
-            $repoPic = new ProductPictureRepository();
             foreach($_FILES as $pic) {
                 $url = $repoPic->upload($pic);
                 if ($url != null) 
                     $repoPic->create($pId, $url);
             }
         }
-
+        
         // return the response
         header('Content-Type: application/json');
         echo json_encode([
             'status' => 'ok',
             'data' => $repo->find($pId), // could return only id
-            //'query' => $repo->lastQuery,
-            'error' => $repo->error
+            'query' => $repo->lastQuery . $repoPic->lastQuery,
+            'error' => $repo->error . $repoPic->error
         ]);
 
     }
@@ -98,8 +101,8 @@ class ProductController {
         echo json_encode([
             'status' => 'ok',
             'data' => $repo->find($id), // could return only id
-            //'query' => $repo->lastQuery,
-            'error' => $repo->error
+            'query' => $repo->lastQuery . $repoPic->lastQuery,
+            'error' => $repo->error . $repoPic->error
         ]);
 
     }
@@ -160,6 +163,17 @@ class ProductController {
             //'query' => $repo->lastQuery,
         ]);
         
+    }
+
+    public function delete(int $productId):void
+    {
+        $repo = new ProductRepository();
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'ok',
+            'data' => $repo->delete($productId),
+            //'query' => $repo->lastQuery,
+        ]);
     }
 
 }

@@ -9,6 +9,23 @@ class ProductRepository {
     public string $lastQuery = "";
     public string $error = "";
 
+    public function delete(int $id):bool
+    {
+
+        // pictures are deleted on cascade
+        // but before we should remove the files
+
+        $sql = "
+            DELETE FROM product p 
+            WHERE p.id = $id
+        ";
+        $mysqli = DatabaseManager::get()->getConn();
+        if ($mysqli->query($sql))
+            return true;
+        else
+            return false;
+    }
+
     public function update(int $id, array $product):bool {
         $query = "
             UPDATE product
@@ -114,6 +131,42 @@ class ProductRepository {
             return $product;
         }
         return [];
+    }
+
+    public function findOwner(int $uid):array {
+        $products = [];
+        $sql = "
+            SELECT p.*
+            FROM product p
+            WHERE p.user_id = {$uid}
+        ";
+        $conn = DatabaseManager::get()->getConn();
+        $result = $conn->query($sql);
+        $this->lastQuery = $sql;
+        if ($result) {
+            while ($p = $result->fetch_assoc())
+            {   
+                $pictures = [];
+                $sqlPics = "
+                    SELECT pp.*
+                    FROM product_picture pp
+                    WHERE pp.product_id = {$p['id']}
+                ";
+                $resultPics = $conn->query($sqlPics);
+                $this->lastQuery .= $sqlPics;
+                if ($resultPics) {
+                    while ($pp = $resultPics->fetch_assoc())
+                        $pictures[] = [
+                            'id' => $pp['id'],
+                            'url' => $pp['url']
+                        ];
+                } else $this->error .= $conn->error;
+                
+                $p['pictures'] = $pictures;
+                $products[] = $p;
+            }
+        } else $this->error .= $conn->error;
+        return $products;
     }
 
     public function search(?array $filter = []):array {

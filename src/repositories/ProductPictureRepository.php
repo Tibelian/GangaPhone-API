@@ -15,16 +15,36 @@ class ProductPictureRepository {
             if ($i != 0) $pIds .= ",";
             $pIds .= (int)$pictures[$i]['id'];
         }
+        $whereNot = "";
+        if (!empty($pIds)) 
+            $whereNot = "AND pp.id NOT IN ($pIds)";
         $sql = "
-            DELETE FROM product_picture pp 
+            DELETE pp FROM product_picture pp 
             INNER JOIN product p
             ON pp.product_id = p.id
-            WHERE pp.id NOT IN ($pIds)
-            AND pp.product_id = $productId;
+            WHERE pp.product_id = $productId
+            $whereNot
         ";
         $database = DatabaseManager::get();
         $mysqli = $database->getConn();
         $mysqli->query($sql);
+        $this->lastQuery .= $sql;
+        $this->error .= $mysqli->error;
+    }
+
+    public function deleteOne(int $picId):bool {
+
+        // before we should delete the file
+
+        $sql = "
+            DELETE FROM product_picture pp 
+            WHERE pp.id = $picId
+        ";
+        $mysqli = DatabaseManager::get()->getConn();
+        if ($mysqli->query($sql))
+            return true;
+        else
+            return false;
     }
 
     public function create(int $productId, string $url):?string {

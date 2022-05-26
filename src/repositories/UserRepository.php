@@ -46,39 +46,16 @@ class UserRepository {
                 return null;
             }
             $user = $result->fetch_assoc();
-            $user['products'] = [];
-            
-            $queryProducts = "
-                SELECT p.*
-                FROM product p
-                WHERE p.user_id = {$user['id']}
-            ";
-            $resultProducts = $conn->query($queryProducts);
-            $this->lastQuery .= $queryProducts;
-            if ($resultProducts) {
-                while ($p = $resultProducts->fetch_assoc()) {
-                    $p['pictures'] = [];
-                    $user['products'][] = $p;
-                    $queryPictures = "
-                        SELECT pp.*
-                        FROM product_picture pp
-                        WHERE pp.product_id = {$p['id']}
-                    ";
-                    $resultPictures = $conn->query($queryPictures);
-                    $this->lastQuery .= $queryPictures;
-                    if ($resultPictures) {
-                        while ($pp = $resultPictures->fetch_assoc()) {
-                            $p['pictures'][] = $pp;
-                        }
-                    }
-                }
-            } else {
-                $this->error = $conn->error;
-            }
+
+            $prodRepo = new ProductRepository();
+            $user['products'] = $prodRepo->findOwner($user['id']);
+
+            $msgRepo = new MessageRepository();
+            $user['messages'] = $msgRepo->findAll($user['id']);
+
             return $user;
-        }   else {
-            $this->error = $conn->error;
-        }
+        } 
+        else $this->error = $conn->error;
         return null;
     }
 

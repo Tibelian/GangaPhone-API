@@ -38,11 +38,25 @@ class Service {
             '\Tibelian\GangaPhoneApi\Controller\ProductController@update');
         $router->post('/product/(\d+)/visits', 
             '\Tibelian\GangaPhoneApi\Controller\ProductController@updateVisits');
+        $router->post('/product/delete/(\d+)', 
+            '\Tibelian\GangaPhoneApi\Controller\ProductController@delete');
+
+        $router->post('/picture/delete/(\d+)', 
+            '\Tibelian\GangaPhoneApi\Controller\ProductPictureController@delete');
             
         $router->post('/user/new', 
             '\Tibelian\GangaPhoneApi\Controller\UserController@create');
         $router->post('/user/find', 
             '\Tibelian\GangaPhoneApi\Controller\UserController@find');
+            
+        $router->post('/message/new', 
+            '\Tibelian\GangaPhoneApi\Controller\MessageController@create');
+        $router->get('/message/(\d+)', 
+            '\Tibelian\GangaPhoneApi\Controller\MessageController@findOne');
+        $router->get('/message/all/(\d+)', 
+            '\Tibelian\GangaPhoneApi\Controller\MessageController@findAll');
+        $router->get('/message/from/(\d+)/to/(\d+)', 
+            '\Tibelian\GangaPhoneApi\Controller\MessageController@findSpecific');
 
         // run it!
         $router->run();

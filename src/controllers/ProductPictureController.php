@@ -2,25 +2,31 @@
 
 namespace Tibelian\GangaPhoneApi\Controller;
 
-use Exception;
 use Tibelian\GangaPhoneApi\Repository\ProductPictureRepository;
 
 class ProductPictureController {
 
-    public function create():void {
-        
-        // execute query
+    public function create():void
+    {
         $repo = new ProductPictureRepository();
-        $ppId = $repo->create($_FILES['image'], $_POST['product_id']);
-
-        // return the response
+        $ppId = $repo->create($_POST['product_id'], $repo->upload($_FILES));
         header('Content-Type: application/json');
         echo json_encode([
             'status' => 'ok',
             'data' => $ppId,
             //'query' => $repo->lastQuery,
         ]);
+    }
 
+    public function delete(int $pictureId):void
+    {
+        $repo = new ProductPictureRepository();
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'ok',
+            'data' => $repo->deleteOne($pictureId),
+            //'query' => $repo->lastQuery,
+        ]);
     }
 
 }
