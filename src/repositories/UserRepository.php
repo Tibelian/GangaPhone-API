@@ -4,10 +4,7 @@ namespace Tibelian\GangaPhoneApi\Repository;
 
 use Tibelian\GangaPhoneApi\DatabaseManager;
 
-class UserRepository {
-
-    public string $lastQuery = "";
-    public string $error = "";
+class UserRepository extends RepositoryBase {
 
     public function create(array $user):int {
         $query = "
@@ -24,10 +21,11 @@ class UserRepository {
         $loc = $user['location'];
 
         $stmt->bind_param('sssss', $uname, $pass, $email, $phone, $loc);
+        $this->addQueryLog($query);
         if ($stmt->execute())
             return $stmt->insert_id;
 
-        $this->error = $stmt->error;
+        $this->addErrorLog($stmt->error);
         return -1;
     }
 
@@ -38,11 +36,11 @@ class UserRepository {
             SELECT u.* 
             FROM user u '.$this->appendWhere($userCond, $conn);
         $result = $conn->query($query);
-        $this->lastQuery = $query;
+        $this->addQueryLog($query);
         if ($result) 
         {
             if ($result->num_rows == 0) {
-                $this->error = 'not found';
+                $this->addErrorLog('not found');
                 return null;
             }
             $user = $result->fetch_assoc();
@@ -55,7 +53,7 @@ class UserRepository {
 
             return $user;
         } 
-        else $this->error = $conn->error;
+        else $this->addErrorLog($conn->error);
         return null;
     }
 

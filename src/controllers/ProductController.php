@@ -44,9 +44,9 @@ class ProductController {
         header('Content-Type: application/json');
         echo json_encode([
             'status' => 'ok',
-            'data' => $repo->find($pId), // could return only id
-            'query' => $repo->lastQuery . $repoPic->lastQuery,
-            'error' => $repo->error . $repoPic->error
+            'data' => $pId != -1 ? $repo->find($pId) : -1, // could return only id
+            'query' => $repo->getQueryLog() . $repoPic->getQueryLog(),
+            'error' => $repo->getErrorLog() . $repoPic->getErrorLog()
         ]);
 
     }
@@ -77,14 +77,19 @@ class ProductController {
             echo json_encode([
                 'status' => 'ok',
                 'data' => -1,
-                //'query' => $repo->lastQuery,
-                'error' => $repo->error
+                //'query' => $repo->getQueryLog()
+                'error' => $repo->getErrorLog()
             ]);
             return;
         }
 
+        // the commands order is very important
         $repoPic = new ProductPictureRepository();
-        // upload new pictures
+
+        // FIRST -- remove the old pictures
+        $repoPic->delete($product['pictures'], $id);
+
+        // SECOND -- upload new pictures
         if (sizeof($_FILES) > 0) {
             foreach($_FILES as $pic) {
                 $url = $repoPic->upload($pic);
@@ -93,16 +98,13 @@ class ProductController {
             }
         }
 
-        // remove the old pictures
-        $repoPic->delete($product['pictures'], $id);
-
         // return the response
         header('Content-Type: application/json');
         echo json_encode([
             'status' => 'ok',
             'data' => $repo->find($id), // could return only id
-            'query' => $repo->lastQuery . $repoPic->lastQuery,
-            'error' => $repo->error . $repoPic->error
+            'query' => $repo->getQueryLog() . $repoPic->getQueryLog(),
+            'error' => $repo->getErrorLog() . $repoPic->getErrorLog()
         ]);
 
     }
@@ -118,8 +120,8 @@ class ProductController {
             echo json_encode([
                 'status' => 'ok',
                 'data' => -1,
-                //'query' => $repo->lastQuery,
-                'error' => $repo->error
+                //'query' => $repo->getQueryLog(),
+                'error' => $repo->getErrorLog()
             ]);
         else
             echo json_encode([
@@ -139,7 +141,8 @@ class ProductController {
         echo json_encode([
             'status' => 'ok',
             'data' => $data,
-            //'query' => $repo->lastQuery,
+            //'query' => $repo->getQueryLog,
+            'error' => $repo->getErrorLog()
         ]);
 
     }
@@ -160,7 +163,8 @@ class ProductController {
         echo json_encode([
             'status' => 'ok',
             'data' => $data,
-            //'query' => $repo->lastQuery,
+            //'query' => $repo->getQueryLog(),
+            'error' => $repo->getErrorLog()
         ]);
         
     }
@@ -172,7 +176,8 @@ class ProductController {
         echo json_encode([
             'status' => 'ok',
             'data' => $repo->delete($productId),
-            //'query' => $repo->lastQuery,
+            //'query' => $repo->getQueryLog(),
+            'error' => $repo->getErrorLog()
         ]);
     }
 

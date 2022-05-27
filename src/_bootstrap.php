@@ -9,6 +9,7 @@ require __DIR__ . '/controllers/ProductController.php';
 require __DIR__ . '/controllers/MessageController.php';
 require __DIR__ . '/controllers/UserController.php';
 
+require __DIR__ . '/repositories/RepositoryBase.php';
 require __DIR__ . '/repositories/UserRepository.php';
 require __DIR__ . '/repositories/MessageRepository.php';
 require __DIR__ . '/repositories/ProductRepository.php';

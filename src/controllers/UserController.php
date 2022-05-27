@@ -25,8 +25,8 @@ class UserController {
         echo json_encode([
             'status' => 'ok',
             'data' => $uId,
-            //'query' => $repo->lastQuery,
-            'error' => $repo->error
+            //'query' => $repo->getQueryLog(),
+            'error' => $repo->getErrorLog()
         ]);
 
     }
@@ -49,8 +49,8 @@ class UserController {
         echo json_encode([
             'status' => 'ok',
             'data' => $data,
-            //'query' => $repo->lastQuery,
-            'error' => $repo->error
+            //'query' => $repo->getQueryLog(),
+            'error' => $repo->getErrorLog()
         ]);
 
     }

@@ -14,7 +14,8 @@ class MessageController {
         echo json_encode([
             'status' => 'ok',
             'data' => $repo->findAll($userId),
-            //'query' => $repo->lastQuery,
+            //'query' => $repo->getQueryLog,
+            'error' => $repo->getErrorLog()
         ]);
     }
 
@@ -25,7 +26,8 @@ class MessageController {
         echo json_encode([
             'status' => 'ok',
             'data' => $repo->findSpecific($from, $to),
-            //'query' => $repo->lastQuery,
+            //'query' => $repo->getQueryLog(),
+            'error' => $repo->getErrorLog()
         ]);
     }
 
@@ -36,7 +38,8 @@ class MessageController {
         echo json_encode([
             'status' => 'ok',
             'data' => $repo->findOne($id),
-            //'query' => $repo->lastQuery,
+            //'query' => $repo->getQueryLog(),
+            'error' => $repo->getErrorLog()
         ]);
     }
 
@@ -60,7 +63,8 @@ class MessageController {
         echo json_encode([
             'status' => 'ok',
             'data' => $repo->create($message),
-            //'query' => $repo->lastQuery,
+            //'query' => $repo->getQueryLog(),
+            'error' => $repo->getErrorLog()
         ]);
     }
 

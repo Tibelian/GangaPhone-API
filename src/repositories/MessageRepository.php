@@ -4,10 +4,7 @@ namespace Tibelian\GangaPhoneApi\Repository;
 
 use Tibelian\GangaPhoneApi\DatabaseManager;
 
-class MessageRepository {
-
-    public string $lastQuery = "";
-    public string $error = "";
+class MessageRepository extends RepositoryBase {
 
     public function create(array $message):int {
         $query = "
@@ -19,11 +16,12 @@ class MessageRepository {
         $receiverId = $message['to']['id'];
         $senderId = $message['from']['id'];
         $content = $message['content'];
-        $stmt->bind_param("iis", $senderId, $receiverId, $content);
+        $stmt->bind_param("iis", $receiverId, $senderId, $content);
+        $this->addQueryLog($query);
         if ($stmt->execute()) 
             return $stmt->insert_id;
-        else 
-            return -1;
+        $this->addErrorLog($stmt->error);
+        return -1;
     }
 
     public function findAll(int $userId):array {
@@ -38,13 +36,14 @@ class MessageRepository {
             WHERE m.sender_uid = ?
                 OR m.receiver_uid = ?
             GROUP BY m.id
-            ORDER BY m.date DESC;
+            ORDER BY m.date ASC;
         ";
         $db = DatabaseManager::get();
         $stmt = $db->getConn()->prepare($query);
         $senderId = $userId;
         $receiverId = $userId;
         $stmt->bind_param("ii", $senderId, $receiverId);
+        $this->addQueryLog($query);
         if ($stmt->execute())
         {
             $result = $stmt->get_result();
@@ -60,7 +59,7 @@ class MessageRepository {
                     'is_read' => (bool) $m['is_read'],
                 ];
             }
-        } else $this->error = $stmt->error;
+        } else $this->addErrorLog($stmt->error);
         return $data;
     }
 
@@ -77,6 +76,7 @@ class MessageRepository {
         $senderId = $from;
         $receiverId = $to;
         $stmt->bind_param("ii", $senderId, $receiverId);
+        $this->addQueryLog($query);
         if ($stmt->execute())
         {
             $result = $stmt->get_result();
@@ -90,7 +90,7 @@ class MessageRepository {
                     'is_read' => (bool) $m['is_read'],
                 ];
             }
-        } else $this->error = $stmt->error;
+        } else $this->addErrorLog($stmt->error);
         return $data;
     }
 
@@ -103,6 +103,7 @@ class MessageRepository {
         $stmt = $db->getConn()->prepare($query);
         $id = $msgId;
         $stmt->bind_param("i", $id);
+        $this->addQueryLog($query);
         if ($stmt->execute())
         {
             $result = $stmt->get_result();
@@ -116,6 +117,7 @@ class MessageRepository {
                 'is_read' => (bool) $m['is_read'],
             ];
         }
+        $this->addErrorLog($stmt->error);
         return null;
     }
 

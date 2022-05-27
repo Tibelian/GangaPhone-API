@@ -14,7 +14,8 @@ class ProductPictureController {
         echo json_encode([
             'status' => 'ok',
             'data' => $ppId,
-            //'query' => $repo->lastQuery,
+            //'query' => $repo->getQueryLog(),
+            'error' => $repo->getErrorLog()
         ]);
     }
 
@@ -25,7 +26,8 @@ class ProductPictureController {
         echo json_encode([
             'status' => 'ok',
             'data' => $repo->deleteOne($pictureId),
-            //'query' => $repo->lastQuery,
+            //'query' => $repo->getQueryLog(),
+            'error' => $repo->getErrorLog()
         ]);
     }
 

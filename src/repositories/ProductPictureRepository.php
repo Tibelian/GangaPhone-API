@@ -4,10 +4,7 @@ namespace Tibelian\GangaPhoneApi\Repository;
 
 use Tibelian\GangaPhoneApi\DatabaseManager;
 
-class ProductPictureRepository {
-
-    public string $lastQuery = "";
-    public string $error = "";
+class ProductPictureRepository extends RepositoryBase {
 
     public function delete(array $pictures, int $productId):void {
         $pIds = '';
@@ -28,8 +25,8 @@ class ProductPictureRepository {
         $database = DatabaseManager::get();
         $mysqli = $database->getConn();
         $mysqli->query($sql);
-        $this->lastQuery .= $sql;
-        $this->error .= $mysqli->error;
+        $this->addQueryLog($sql);
+        $this->addErrorLog($mysqli->error);
     }
 
     public function deleteOne(int $picId):bool {
@@ -41,10 +38,11 @@ class ProductPictureRepository {
             WHERE pp.id = $picId
         ";
         $mysqli = DatabaseManager::get()->getConn();
-        if ($mysqli->query($sql))
+        $this->addQueryLog($sql);
+        if ($mysqli->query($sql)) 
             return true;
-        else
-            return false;
+        $this->addErrorLog($mysqli->error);
+        return false;
     }
 
     public function create(int $productId, string $url):?string {
@@ -55,8 +53,10 @@ class ProductPictureRepository {
         $database = DatabaseManager::get();
         $stmt = $database->getConn()->prepare($query);
         $stmt->bind_param("is", $productId, $url);
+        $this->addQueryLog($query);
         if ($stmt->execute()) 
             return $url;
+        $this->addErrorLog($stmt->error);
         return null;
     }
 
@@ -79,11 +79,9 @@ class ProductPictureRepository {
             if (move_uploaded_file($file["tmp_name"], $target_file)) 
                 return WEB_URL . '/uploads/' . date('Y-m') . '/' . $randomName . '.' . $imgExtension;
             else
-                $this->erro = "Couldn't move the file to the uploads directory";
-        } else {
-            $this->error = "File is not an image.";
-        }
-
+                $this->addErrorLog("Couldn't move the file to the uploads directory");
+        } 
+        else $this->addErrorLog("File is not an image.");
         return null;
     }
 

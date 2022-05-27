@@ -4,10 +4,7 @@ namespace Tibelian\GangaPhoneApi\Repository;
 
 use Tibelian\GangaPhoneApi\DatabaseManager;
 
-class ProductRepository {
-
-    public string $lastQuery = "";
-    public string $error = "";
+class ProductRepository extends RepositoryBase {
 
     public function delete(int $id):bool
     {
@@ -16,14 +13,15 @@ class ProductRepository {
         // but before we should remove the files
 
         $sql = "
-            DELETE FROM product p 
+            DELETE p FROM product p 
             WHERE p.id = $id
         ";
         $mysqli = DatabaseManager::get()->getConn();
+        $this->addQueryLog($sql);
         if ($mysqli->query($sql))
             return true;
-        else
-            return false;
+        $this->addErrorLog($mysqli->error);
+        return false;
     }
 
     public function update(int $id, array $product):bool {
@@ -44,9 +42,8 @@ class ProductRepository {
         $stmt->bind_param("sssidi", $name, $desc, $stat, $sold, $price, $pId);
 
         $ok = $stmt->execute();
-        $this->lastQuery = $query;
-        $this->error = $stmt->error;
-
+        $this->addQueryLog($query);
+        $this->addErrorLog($stmt->error);
         return $ok;
     }
 
@@ -62,9 +59,8 @@ class ProductRepository {
         $stmt->bind_param("i", $id);
 
         $ok = $stmt->execute();
-        $this->lastQuery = $query;
-        $this->error = $stmt->error;
-
+        $this->addQueryLog($query);
+        $this->addErrorLog($stmt->error);
         return $ok;
     }
 
@@ -83,10 +79,11 @@ class ProductRepository {
         $price = $product['price'];
 
         $stmt->bind_param('sssid', $name, $desc, $status, $uid, $price);
+        $this->addQueryLog($query);
         if ($stmt->execute())
             return $stmt->insert_id;
 
-        $this->error = $stmt->error;
+        $this->addErrorLog($stmt->error);
         return -1;
     }
 
@@ -99,6 +96,7 @@ class ProductRepository {
         $database = DatabaseManager::get();
         $conn = $database->getConn();
         $result = $conn->query($query);
+        $this->addQueryLog($query);
         if ($result) {
             $data = $result->fetch_assoc();
             $product = [
@@ -122,6 +120,7 @@ class ProductRepository {
             $query2 = "
                 SELECT * FROM product_picture 
                 WHERE product_id = " . $data['pid'];
+            $this->addQueryLog($query2);
             $result2 = $conn->query($query2);
             while ($data2 = $result2->fetch_assoc())
                 $product['pictures'][] = [
@@ -129,7 +128,7 @@ class ProductRepository {
                     'url' => $data2['url']
                 ];
             return $product;
-        }
+        } else $this->addErrorLog($conn->error);
         return [];
     }
 
@@ -142,7 +141,7 @@ class ProductRepository {
         ";
         $conn = DatabaseManager::get()->getConn();
         $result = $conn->query($sql);
-        $this->lastQuery = $sql;
+        $this->addQueryLog($sql);
         if ($result) {
             while ($p = $result->fetch_assoc())
             {   
@@ -153,19 +152,19 @@ class ProductRepository {
                     WHERE pp.product_id = {$p['id']}
                 ";
                 $resultPics = $conn->query($sqlPics);
-                $this->lastQuery .= $sqlPics;
+                $this->addQueryLog($sqlPics);
                 if ($resultPics) {
                     while ($pp = $resultPics->fetch_assoc())
                         $pictures[] = [
                             'id' => $pp['id'],
                             'url' => $pp['url']
                         ];
-                } else $this->error .= $conn->error;
+                } else $this->addErrorLog($conn->error);
                 
                 $p['pictures'] = $pictures;
                 $products[] = $p;
             }
-        } else $this->error .= $conn->error;
+        } else $this->addErrorLog($conn->error);
         return $products;
     }
 
@@ -181,6 +180,7 @@ class ProductRepository {
         $database = DatabaseManager::get();
         $conn = $database->getConn();
         $result = $conn->query($query);
+        $this->addQueryLog($query);
         if ($result)
             while($row = $result->fetch_assoc())
                 $entries[] = [
@@ -206,7 +206,8 @@ class ProductRepository {
                         ]
                     ]
                 ];
-        $this->lastQuery = $query;
+        else $this->addErrorLog($conn->error);
+        $this->addQueryLog($query);
         return $entries;
     }
 
