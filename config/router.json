@@ -1,0 +1,89 @@
+{
+    "config": {
+        "namespace": "\\Tibelian\\GangaPhoneApi\\Controller"
+    },
+    "before": [
+        {
+            "method": "POST|GET|PUT|DELETE|PATCH",
+            "pattern": "/.*",
+            "controller": "LogController@appendLog"
+        },
+        {
+            "method": "POST|GET|PUT|DELETE|PATCH",
+            "pattern": "/.*",
+            "controller": "AuthController@authHeader"
+        }
+    ],
+    "routes" : [
+        {
+            "method": "POST",
+            "pattern": "/product/search",
+            "controller": "ProductController@search"
+        },
+        {
+            "method": "GET",
+            "pattern": "/product/search",
+            "controller": "ProductController@search"
+        },
+        {
+            "method": "GET",
+            "pattern": "/product/(\\d+)",
+            "controller": "ProductController@find"
+        },
+        {
+            "method": "POST",
+            "pattern": "/product/new",
+            "controller": "ProductController@create"
+        },
+        {
+            "method": "POST",
+            "pattern": "/product/(\\d+)",
+            "controller": "ProductController@update"
+        },
+        {
+            "method": "POST",
+            "pattern": "/product/(\\d+)/visits",
+            "controller": "ProductController@updateVisits"
+        },
+        {
+            "method": "POST",
+            "pattern": "/product/delete/(\\d+)",
+            "controller": "ProductController@delete"
+        },
+        {
+            "method": "POST",
+            "pattern": "/picture/delete/(\\d+)",
+            "controller": "ProductPictureController@delete"
+        },
+        {
+            "method": "POST",
+            "pattern": "/user/new",
+            "controller": "UserController@create"
+        },
+        {
+            "method": "POST",
+            "pattern": "/user/find",
+            "controller": "UserController@find"
+        },
+        {
+            "method": "POST",
+            "pattern": "/message/new",
+            "controller": "MessageController@create"
+        },
+        {
+            "method": "GET",
+            "pattern": "/message/(\\d+)",
+            "controller": "MessageController@findOne"
+        },
+        {
+            "method": "GET",
+            "pattern": "/message/all/(\\d+)",
+            "controller": "MessageController@findAll"
+        },
+        {
+            "method": "GET",
+            "pattern": "/message/from/(\\d+)/to/(\\d+)",
+            "controller": "MessageController@findSpecific"
+        }
+    ]
+}

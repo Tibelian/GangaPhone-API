@@ -12,7 +12,4 @@ define("WEB_URL", 'https://gangaphone.tibelian.com');
 
 $service = new Service();
 
-$service->enableLogs();
-
 $service->init();
-

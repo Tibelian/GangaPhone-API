@@ -4,6 +4,8 @@ require __DIR__ . '/Config.php';
 require __DIR__ . '/Service.php';
 require __DIR__ . '/DatabaseManager.php';
 
+require __DIR__ . '/controllers/LogController.php';
+require __DIR__ . '/controllers/AuthController.php';
 require __DIR__ . '/controllers/ProductPictureController.php';
 require __DIR__ . '/controllers/ProductController.php';
 require __DIR__ . '/controllers/MessageController.php';
