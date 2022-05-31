@@ -76,13 +76,27 @@ class ProductPictureRepository extends RepositoryBase {
         // check if it is an image
         if(@getimagesize($file['tmp_name']) !== false) {
             // upload file
-            if (move_uploaded_file($file["tmp_name"], $target_file)) 
+            //if (move_uploaded_file($file["tmp_name"], $target_file)) 
+            if ($this->compress($file["tmp_name"], $target_file, 80))
                 return WEB_URL . '/uploads/' . date('Y-m') . '/' . $randomName . '.' . $imgExtension;
             else
                 $this->addErrorLog("Couldn't move the file to the uploads directory");
         } 
         else $this->addErrorLog("File is not an image.");
         return null;
+    }
+
+    private function compress(string $source, string $destination, int $quality):bool {
+        $info = getimagesize($source);
+        switch($info['mime']) {
+            case 'image/jpeg':  $image = imagecreatefromjpeg($source);   break;
+            case 'image/gif':   $image = imagecreatefromgif($source);    break;
+            case 'image/png':   $image = imagecreatefrompng($source);    break;
+            case 'image/bmp':   $image = imagecreatefrombmp($source);    break;
+            case 'image/webp':  $image = imagecreatefromwebp($source);   break;
+            case 'image/wbmp':  $image = imagecreatefromwbmp($source);   break;
+        }
+        return imagejpeg($image, $destination, $quality);
     }
 
 }
