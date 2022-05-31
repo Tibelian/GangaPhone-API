@@ -21,10 +21,12 @@ class AuthController {
             $this->abort('miss authorization header');
 
         // first word should be Bearer and second one is the JWT
-        $reqJWT = explode(" ", $_SERVER['HTTP_AUTHORIZATION'])[1]; 
+        $req = explode(" ", $_SERVER['HTTP_AUTHORIZATION']);
+        if (sizeof($req) != 2) 
+            $this->abort('invalid authorization header');
 
         // validate the token
-        if ($this->isValid($reqJWT) == false) 
+        if ($req[0] == "Bearer" && $this->isValid($req[1]) == false) 
             $this->abort();
     }
 
