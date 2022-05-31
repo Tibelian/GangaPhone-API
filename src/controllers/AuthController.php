@@ -17,6 +17,8 @@ class AuthController {
         // check if the auth header exists
         if (!isset($_SERVER['HTTP_AUTHORIZATION']))
             $this->abort('miss authorization header');
+        if (empty($_SERVER['HTTP_AUTHORIZATION']))
+            $this->abort('miss authorization header');
 
         // first word should be Bearer and second one is the JWT
         $reqJWT = explode(" ", $_SERVER['HTTP_AUTHORIZATION'])[1]; 
