@@ -1,7 +1,10 @@
 <?php
 
+// this is the importer
+// so itloads all the project files
+
 require __DIR__ . '/Config.php';
-require __DIR__ . '/Service.php';
+require __DIR__ . '/WebService.php';
 require __DIR__ . '/DatabaseManager.php';
 
 require __DIR__ . '/controllers/LogController.php';

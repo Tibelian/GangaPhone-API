@@ -4,8 +4,14 @@ namespace Tibelian\GangaPhoneApi\Repository;
 
 use Tibelian\GangaPhoneApi\DatabaseManager;
 
+/**
+ * Access product pictures
+ */
 class ProductPictureRepository extends RepositoryBase {
 
+    /**
+     * delete multiple query by product id
+     */
     public function delete(array $pictures, int $productId):void {
         $pIds = '';
         for($i = 0; $i < sizeof($pictures); $i++) {
@@ -29,12 +35,15 @@ class ProductPictureRepository extends RepositoryBase {
         $this->addErrorLog($mysqli->error);
     }
 
+    /**
+     * delete one picture query
+     */
     public function deleteOne(int $picId):bool {
 
         // before we should delete the file
 
         $sql = "
-            DELETE FROM product_picture pp 
+            DELETE pp FROM product_picture pp 
             WHERE pp.id = $picId
         ";
         $mysqli = DatabaseManager::get()->getConn();
@@ -45,6 +54,9 @@ class ProductPictureRepository extends RepositoryBase {
         return false;
     }
 
+    /**
+     * insert query knowing product and url
+     */
     public function create(int $productId, string $url):?string {
         $query = "
             INSERT INTO product_picture(product_id, url)
@@ -60,6 +72,10 @@ class ProductPictureRepository extends RepositoryBase {
         return null;
     }
 
+    /**
+     * move file from request temp
+     * to uploads directory, applying compresssion
+     */
     public function upload(array $file):?string {
 
         // prepare directory
@@ -86,6 +102,9 @@ class ProductPictureRepository extends RepositoryBase {
         return null;
     }
 
+    /**
+     * compress image file
+     */
     private function compress(string $source, string $destination, int $quality):bool {
         $info = getimagesize($source);
         switch($info['mime']) {

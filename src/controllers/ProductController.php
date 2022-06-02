@@ -6,11 +6,18 @@ use Exception;
 use Tibelian\GangaPhoneApi\Repository\ProductRepository;
 use Tibelian\GangaPhoneApi\Repository\ProductPictureRepository;
 
+/**
+ * Manage product requests 
+ * CRUD functions
+ */
 class ProductController {
 
+    /**
+     * CREATE
+     */
     public function create():void {
 
-        // obtain data
+        // obtain data from the request
         $product = [];
         try {
             if (isset($_POST['product'])) 
@@ -51,6 +58,9 @@ class ProductController {
 
     }
 
+    /**
+     * UPDATE
+     */
     public function update(int $id):void {
 
         // obtain data
@@ -71,7 +81,7 @@ class ProductController {
         $repo = new ProductRepository();
         $ok = $repo->update($id, $product);
 
-        // 
+        // return the response
         if ($ok == false) {
             header('Content-Type: application/json');
             echo json_encode([
@@ -109,6 +119,9 @@ class ProductController {
 
     }
 
+    /**
+     * UPDATE ONLY VISITS
+     */
     public function updateVisits(int $id):void {
         
         // execute query
@@ -130,6 +143,9 @@ class ProductController {
             ]);
     }
 
+    /**
+     * READ ONE
+     */
     public function find(int $id):void {
 
         // execute query
@@ -147,6 +163,9 @@ class ProductController {
 
     }
 
+    /**
+     * READ MULTIPLE
+     */
     public function search():void {
         
         // obtain request data
@@ -169,6 +188,9 @@ class ProductController {
         
     }
 
+    /**
+     * DELETE ONE
+     */
     public function delete(int $productId):void
     {
         $repo = new ProductRepository();

@@ -5,8 +5,16 @@ namespace Tibelian\GangaPhoneApi\Controller;
 use Exception;
 use Tibelian\GangaPhoneApi\Repository\MessageRepository;
 
+/**
+ * Manage messages
+ * CRUD functions
+ */
 class MessageController {
 
+    /**
+     * READ MULTIPLE
+     * by user's id
+     */
     public function findAll(int $userId):void
     {
         $repo = new MessageRepository();
@@ -19,6 +27,10 @@ class MessageController {
         ]);
     }
 
+    /**
+     * READ MULTPLE
+     * by sender and receiver
+     */
     public function findSpecific(int $from, int $to):void 
     {
         $repo = new MessageRepository();
@@ -31,6 +43,9 @@ class MessageController {
         ]);
     }
 
+    /**
+     * READ ONE
+     */
     public function findOne(int $id):void 
     {
         $repo = new MessageRepository();
@@ -43,6 +58,9 @@ class MessageController {
         ]);
     }
 
+    /**
+     * CREATE ONE
+     */
     public function create():void 
     {
         $message = [];

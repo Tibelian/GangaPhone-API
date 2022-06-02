@@ -4,9 +4,17 @@ namespace Tibelian\GangaPhoneApi;
 
 use Bramus\Router\Router;
 
-class Service {
+/**
+ * The website dispatcher
+ * manges all the traffic
+ * received from the client
+ */
+class WebService {
 
-    public function init() {
+    /**
+     * run the service
+     */
+    public function init():void {
 
         // create Router instance
         $router = new Router();

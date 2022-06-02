@@ -4,8 +4,14 @@ namespace Tibelian\GangaPhoneApi\Repository;
 
 use Tibelian\GangaPhoneApi\DatabaseManager;
 
+/**
+ * Access users data
+ */
 class UserRepository extends RepositoryBase {
 
+    /**
+     * insert query
+     */
     public function create(array $user):int {
         $query = "
             INSERT INTO user(username, password, email, phone, location)
@@ -29,6 +35,9 @@ class UserRepository extends RepositoryBase {
         return -1;
     }
 
+    /**
+     * select query
+     */
     public function find(array $userCond):?array {
         $database = DatabaseManager::get();
         $conn = $database->getConn();
@@ -57,6 +66,9 @@ class UserRepository extends RepositoryBase {
         return null;
     }
 
+    /**
+     * creates where condition
+     */
     private function appendWhere(array $user, \mysqli $mysqli):string 
     {
         if (isset($user['id'])) 

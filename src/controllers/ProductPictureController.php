@@ -4,8 +4,15 @@ namespace Tibelian\GangaPhoneApi\Controller;
 
 use Tibelian\GangaPhoneApi\Repository\ProductPictureRepository;
 
+/**
+ * Manage product pictures
+ * CRUD functions
+ */
 class ProductPictureController {
 
+    /**
+     * CREATE
+     */
     public function create():void
     {
         $repo = new ProductPictureRepository();
@@ -19,6 +26,9 @@ class ProductPictureController {
         ]);
     }
 
+    /**
+     * DELETE ONE
+     */
     public function delete(int $pictureId):void
     {
         $repo = new ProductPictureRepository();

@@ -2,8 +2,14 @@
 
 namespace Tibelian\GangaPhoneApi\Controller;
 
+/**
+ * Manage logs
+ */
 class LogController {
 
+    /**
+     * save request info
+     */
     public function appendLog():void 
     {
         // filename and path

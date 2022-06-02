@@ -5,8 +5,15 @@ namespace Tibelian\GangaPhoneApi\Controller;
 use Exception;
 use Tibelian\GangaPhoneApi\Repository\UserRepository;
 
+/**
+ * Manage user
+ * CRUD functions
+ */
 class UserController {
 
+    /**
+     * CREATE ONE
+     */
     public function create():void {
 
         // obtain data
@@ -31,6 +38,9 @@ class UserController {
 
     }
 
+    /**
+     * READ ONE
+     */
     public function find():void {
 
         // obtain data

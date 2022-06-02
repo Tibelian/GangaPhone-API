@@ -4,8 +4,15 @@ namespace Tibelian\GangaPhoneApi\Repository;
 
 use Tibelian\GangaPhoneApi\DatabaseManager;
 
+/**
+ * Access product data
+ */
 class ProductRepository extends RepositoryBase {
 
+    /**
+     * delete query one product
+     * knowing his id
+     */
     public function delete(int $id):bool
     {
 
@@ -24,6 +31,9 @@ class ProductRepository extends RepositoryBase {
         return false;
     }
 
+    /**
+     * update query
+     */
     public function update(int $id, array $product):bool {
         $query = "
             UPDATE product
@@ -47,6 +57,9 @@ class ProductRepository extends RepositoryBase {
         return $ok;
     }
 
+    /** 
+     * update query increase visits
+     */
     public function upVisits(int $productId) {
         $query = "
             UPDATE product 
@@ -64,6 +77,9 @@ class ProductRepository extends RepositoryBase {
         return $ok;
     }
 
+    /**
+     * insert query
+     */
     public function create(array $product):int {
         $query = "
             INSERT INTO product(name, description, date, status, sold, visits, user_id, price)
@@ -87,6 +103,9 @@ class ProductRepository extends RepositoryBase {
         return -1;
     }
 
+    /**
+     * select query by id
+     */
     public function find(int $id):array {
         $query = "
             SELECT p.*, p.id as pid, u.*, u.id as uid
@@ -132,6 +151,9 @@ class ProductRepository extends RepositoryBase {
         return [];
     }
 
+    /**
+     * selcect query by owner
+     */
     public function findOwner(int $uid):array {
         $products = [];
         $sql = "
@@ -168,6 +190,9 @@ class ProductRepository extends RepositoryBase {
         return $products;
     }
 
+    /**
+     * select query with condition
+     */
     public function search(?array $filter = []):array {
         $query = "
             SELECT p.id as pid, p.name, p.description, p.status, p.date, p.price, p.sold, 
@@ -211,6 +236,9 @@ class ProductRepository extends RepositoryBase {
         return $entries;
     }
 
+    /**
+     * creates condition using custom filter
+     */
     private function applyFilter(array $filter):string {
         if (sizeof($filter) == 0) return ' GROUP BY p.id ';
         $where = "";

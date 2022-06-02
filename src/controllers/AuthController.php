@@ -8,10 +8,14 @@ use Firebase\JWT\Key;
 use Firebase\JWT\SignatureInvalidException;
 
 /**
+ * Manage authentication to the webservice
  * @see https://jwt.io/
  */
 class AuthController {
     
+    /**
+     * check if header auth exists and its valid
+     */
     public function authHeader():void 
     {
         // check if the auth header exists
@@ -30,6 +34,9 @@ class AuthController {
             $this->abort();
     }
 
+    /**
+     * validate jwt
+     */
     public function isValid(string $jwt):bool 
     {
         // obtain the real auth data
@@ -54,6 +61,9 @@ class AuthController {
         return false;
     }
 
+    /**
+     * exit program
+     */
     private function abort(string $error = 'invalid token'):void 
     {
         header('HTTP/1.1 401 UNAUTHORIZED');

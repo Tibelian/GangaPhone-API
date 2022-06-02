@@ -4,8 +4,14 @@ namespace Tibelian\GangaPhoneApi\Repository;
 
 use Tibelian\GangaPhoneApi\DatabaseManager;
 
+/**
+ * Access messages/chats
+ */
 class MessageRepository extends RepositoryBase {
 
+    /**
+     * insert one message query
+     */
     public function create(array $message):int {
         $query = "
             INSERT INTO message(receiver_uid, sender_uid, content, date, is_read)
@@ -24,6 +30,9 @@ class MessageRepository extends RepositoryBase {
         return -1;
     }
 
+    /**
+     * select all messages by user
+     */
     public function findAll(int $userId):array {
         $data = [];
         $query = "
@@ -63,6 +72,9 @@ class MessageRepository extends RepositoryBase {
         return $data;
     }
 
+    /**
+     * select all messages between two users
+     */
     public function findSpecific(int $from, int $to):?array {
         $data = [];
         $query = "
@@ -94,6 +106,9 @@ class MessageRepository extends RepositoryBase {
         return $data;
     }
 
+    /**
+     * select one message by id
+     */
     public function findOne(int $msgId):?array {
         $query = "
             SELECT * FROM message
