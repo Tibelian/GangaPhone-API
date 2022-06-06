@@ -30,8 +30,13 @@ class UserRepository extends RepositoryBase {
         $this->addQueryLog($query);
         if ($stmt->execute())
             return $stmt->insert_id;
+        else {
+            $this->addErrorLog($stmt->error);
+            // duplicated
+            if ($stmt->errno == 1062) 
+                return -2;
+        }
 
-        $this->addErrorLog($stmt->error);
         return -1;
     }
 
